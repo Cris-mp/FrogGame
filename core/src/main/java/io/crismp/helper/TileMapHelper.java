@@ -27,7 +27,7 @@ public class TileMapHelper {
 
     public OrthogonalTiledMapRenderer setupMap() {
 
-        tiledMap = new TmxMapLoader().load("assets\\maps\\mapaAzul.tmx");
+        tiledMap = new TmxMapLoader().load("assets/maps/mapaAzul.tmx");
         parseMapObjects(tiledMap.getLayers().get("suelos").getObjects());
         return new OrthogonalTiledMapRenderer(tiledMap);
     }
@@ -62,7 +62,7 @@ public class TileMapHelper {
         bodyDef.type = BodyDef.BodyType.StaticBody;
         Body body = gameScreen.getWorld().createBody(bodyDef);
         Shape shape = createPolygonShape(polygonMapObject);
-        body.createFixture(shape, 1000);
+        body.createFixture(shape, 0);
         shape.dispose();
     }
 

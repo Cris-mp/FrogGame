@@ -33,7 +33,7 @@ public class FirstScreen implements Screen {
     public FirstScreen(OrthographicCamera camera) {
         this.camera=camera;
         this.batch = new SpriteBatch();
-        this.world = new World(new Vector2(0,-25f), false);
+        this.world = new World(new Vector2(0,-25), false);
         this.box2DDebugRenderer = new Box2DDebugRenderer();
 
         this.tileMapHelper = new TileMapHelper(this);
@@ -44,8 +44,12 @@ public class FirstScreen implements Screen {
     private void update(){
         world.step(1/60f, 6, 2);
         cameraUpdate();
+
         batch.setProjectionMatrix(camera.combined);
         orthogonalTiledMapRenderer.setView(camera);
+
+        player.update();
+    
 
         if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
             Gdx.app.exit();
@@ -68,8 +72,8 @@ public class FirstScreen implements Screen {
 
         orthogonalTiledMapRenderer.render();
 
-        player.update();
-        
+        player.render(batch); //esto es para debugear
+
         batch.begin();
 
         batch.end();

@@ -28,7 +28,7 @@ public class Player extends GameEntity {
 
     @Override
     public void render(SpriteBatch batch) {
-
+        System.out.println(body.getLinearVelocity().y); //esto es para debugear
     }
 
     private void checkUserInput() {
@@ -40,7 +40,7 @@ public class Player extends GameEntity {
             velX = -1;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && jumpCounter < 2) {
-            float force = body.getMass() * 18;
+            float force = body.getMass() * 12;
             body.setLinearVelocity(body.getLinearVelocity().x, 0);
             body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
             jumpCounter++;
