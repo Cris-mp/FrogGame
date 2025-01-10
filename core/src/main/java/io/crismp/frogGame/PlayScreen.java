@@ -12,49 +12,62 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import io.crismp.helper.Constants;
 import io.crismp.helper.TileMapHelper;
 import io.crismp.objects.player.Player;
 
 /** First screen of the application. Displayed after the application is created. */
-public class FirstScreen implements Screen {
+public class PlayScreen implements Screen {
+
+    private FrogGame frogGame;
 
     private OrthographicCamera camera;
+    private Viewport gamePort;
+
+    private TileMapHelper tileMapHelper;
+    private OrthogonalTiledMapRenderer orthogonalTiledMapRenderer; //nuestro mapa en la pantalla
+
+
+
     private SpriteBatch batch;
     private World world;
     private Box2DDebugRenderer box2DDebugRenderer;
-
-    private OrthogonalTiledMapRenderer orthogonalTiledMapRenderer;
-    private TileMapHelper tileMapHelper;
-
     private Player player;
 
-    public FirstScreen(OrthographicCamera camera) {
-        this.camera=camera;
-        this.batch = new SpriteBatch();
-        this.world = new World(new Vector2(0,-25), false);
-        this.box2DDebugRenderer = new Box2DDebugRenderer();
-
+    public PlayScreen(FrogGame game) {
+        this.frogGame = game;
+        //camara
+        this.camera = new OrthographicCamera();
+        this.gamePort=new FitViewport(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2,camera);
+        //Fondo
         this.tileMapHelper = new TileMapHelper(this);
-        this.orthogonalTiledMapRenderer= tileMapHelper.setupMap();
+        this.world = new World(new Vector2(0,-25), false);
+        this.orthogonalTiledMapRenderer= tileMapHelper.setupMap();//usa world asi que siempre debajo
+        camera.position.set(gamePort.getScreenWidth()/2,gamePort.getScreenHeight()/2,0);
+        
+        this.batch = new SpriteBatch();
+        this.box2DDebugRenderer = new Box2DDebugRenderer();
     }
 
     
     private void update(){
         world.step(1/60f, 6, 2);
         cameraUpdate();
+        player.update();
 
         batch.setProjectionMatrix(camera.combined);
         orthogonalTiledMapRenderer.setView(camera);
 
-        player.update();
     
 
         if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
             Gdx.app.exit();
         }
     }
+
     private  void cameraUpdate(){
         Vector3 position = camera.position;
         position.x = Math.round(player.getBody().getPosition().x*Constants.PPM*10/10f);
@@ -69,9 +82,9 @@ public class FirstScreen implements Screen {
         this.update();
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+        this.batch.setProjectionMatrix(camera.combined);
         orthogonalTiledMapRenderer.render();
-
+        
         player.render(batch); //esto es para debugear
 
         batch.begin();
@@ -100,6 +113,7 @@ public class FirstScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         // Resize your screen here. The parameters represent the new window size.
+        gamePort.update(width, height);
     }
 
     @Override

@@ -14,23 +14,24 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 
-import io.crismp.frogGame.FirstScreen;
+import io.crismp.frogGame.PlayScreen;
 import io.crismp.objects.player.Player;
 
 public class TileMapHelper {
     private TiledMap tiledMap;
-    private FirstScreen gameScreen;
+    private PlayScreen gameScreen;
 
-    public TileMapHelper(FirstScreen gameScreen) {
+    public TileMapHelper(PlayScreen gameScreen) {
         this.gameScreen = gameScreen;
     }
 
     public OrthogonalTiledMapRenderer setupMap() {
-
-        tiledMap = new TmxMapLoader().load("assets/maps/mapaAzul.tmx");
+        tiledMap = new TmxMapLoader().load("maps/mapaAzul.tmx");
         parseMapObjects(tiledMap.getLayers().get("suelos").getObjects());
         return new OrthogonalTiledMapRenderer(tiledMap);
     }
+
+
 
     private void parseMapObjects(MapObjects mapObjects) {
         for (MapObject mapObject : mapObjects) {
@@ -50,7 +51,7 @@ public class TileMapHelper {
                             rectangle.getHeight(),
                             false,
                             gameScreen.getWorld());
-                    gameScreen.setPlayer(new Player(rectangle.getWidth(), rectangle.getHeight(), body));
+                    gameScreen.setPlayer(new Player(rectangle.getWidth()*2, rectangle.getHeight(), body));
 
                 }
             }
