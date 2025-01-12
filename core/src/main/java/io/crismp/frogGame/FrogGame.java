@@ -1,8 +1,5 @@
 package io.crismp.frogGame;
-
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all

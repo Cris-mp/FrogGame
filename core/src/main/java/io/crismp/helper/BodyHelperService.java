@@ -9,10 +9,12 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class BodyHelperService {
     public static Body createBody(float x, float y, float width, float height, boolean isStatic, World world){
+
         BodyDef bodyDef= new BodyDef();
         bodyDef.type = isStatic ? BodyDef.BodyType.StaticBody : BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(x/Constants.PPM, y/Constants.PPM);
         bodyDef.fixedRotation= true;
+        
         Body body = world.createBody(bodyDef);
 
         PolygonShape shape = new PolygonShape();

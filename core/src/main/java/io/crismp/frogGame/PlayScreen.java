@@ -1,5 +1,7 @@
 package io.crismp.frogGame;
 
+import static io.crismp.helper.Constants.*;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -15,7 +17,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import io.crismp.helper.Constants;
 import io.crismp.helper.TileMapHelper;
 import io.crismp.objects.player.Player;
 
@@ -27,32 +28,37 @@ public class PlayScreen implements Screen {
     private OrthographicCamera camera;
     private Viewport gamePort;
 
-    private TileMapHelper tileMapHelper;
+    private TileMapHelper tileMapHelper; // carga y tiene la referancia del mapa
     private OrthogonalTiledMapRenderer orthogonalTiledMapRenderer; //nuestro mapa en la pantalla
+
+    //creamos un mundo y le ponemos fisicas
+    private World world;
+    private Box2DDebugRenderer box2DDebugRenderer;
 
 
 
     private SpriteBatch batch;
-    private World world;
-    private Box2DDebugRenderer box2DDebugRenderer;
     private Player player;
 
     public PlayScreen(FrogGame game) {
         this.frogGame = game;
         //camara
         this.camera = new OrthographicCamera();
-        this.gamePort=new FitViewport(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2,camera);
-        //Fondo
+        this.gamePort=new FitViewport(V_WIDTH, V_HEIGHT,camera); //TODO:creo que esto me hace ir lento el juego en otras pantallas y no adaptarse
+        //Fondo y mundo
         this.tileMapHelper = new TileMapHelper(this);
-        this.world = new World(new Vector2(0,-25), false);
+        this.world = new World(new Vector2(0,-25), true);
         this.orthogonalTiledMapRenderer= tileMapHelper.setupMap();//usa world asi que siempre debajo
-        camera.position.set(gamePort.getScreenWidth()/2,gamePort.getScreenHeight()/2,0);
-        
-        this.batch = new SpriteBatch();
         this.box2DDebugRenderer = new Box2DDebugRenderer();
+
+
+
+        this.batch = new SpriteBatch();
     }
 
-    
+    /**
+     * Aqui se realizan las actualizaciones de nuestro mundo
+     */
     private void update(){
         world.step(1/60f, 6, 2);
         cameraUpdate();
@@ -61,17 +67,34 @@ public class PlayScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         orthogonalTiledMapRenderer.setView(camera);
 
-    
-
+        /* con scape sales del juego */
         if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
             Gdx.app.exit();
         }
     }
-
+    /**
+     * Nos permite que la camara siga al personaje y se vaya actualizando con el movimiento
+     */
     private  void cameraUpdate(){
         Vector3 position = camera.position;
-        position.x = Math.round(player.getBody().getPosition().x*Constants.PPM*10/10f);
-        position.y = Math.round(player.getBody().getPosition().y*Constants.PPM*10/10f);
+
+        if(player.getBody().getPosition().x>9.5 && player.getBody().getPosition().x<10.5){
+            position.x = Math.round(player.getBody().getPosition().x* PPM*10/10f);
+        }else{
+            if(player.getBody().getPosition().x<10.5){
+                position.x = gamePort.getScreenWidth()/4+300;
+            }else{
+                 position.x = gamePort.getScreenWidth()/4+340;
+            }
+        }
+
+
+        position.y =Math.round(player.getBody().getPosition().y* PPM*10/10f+90);
+
+
+
+
+
         camera.position.set(new Vector3(position));
         camera.update();
     }
@@ -84,13 +107,13 @@ public class PlayScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         this.batch.setProjectionMatrix(camera.combined);
         orthogonalTiledMapRenderer.render();
-        
+
+        box2DDebugRenderer.render(world, camera.combined.scl(PPM));
         player.render(batch); //esto es para debugear
 
         batch.begin();
 
         batch.end();
-        box2DDebugRenderer.render(world, camera.combined.scl(Constants.PPM));
 
     }
 
@@ -107,13 +130,13 @@ public class PlayScreen implements Screen {
 
 
     @Override
-    public void show() {  
+    public void show() {
     }
 
     @Override
     public void resize(int width, int height) {
         // Resize your screen here. The parameters represent the new window size.
-        gamePort.update(width, height);
+        camera.setToOrtho(false,width/2, height/2);
     }
 
     @Override
@@ -134,6 +157,6 @@ public class PlayScreen implements Screen {
     @Override
     public void dispose() {
         // Destroy screen's assets here.
-        
+
     }
 }

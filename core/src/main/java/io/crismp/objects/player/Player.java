@@ -28,7 +28,8 @@ public class Player extends GameEntity {
 
     @Override
     public void render(SpriteBatch batch) {
-        System.out.println(body.getLinearVelocity().y); //esto es para debugear
+        System.out.println("x:"+body.getPosition().x); //esto es para debugear
+        System.out.println("y:"+body.getPosition().y);
     }
 
     private void checkUserInput() {
