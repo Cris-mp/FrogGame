@@ -136,7 +136,7 @@ public class PlayScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         // Resize your screen here. The parameters represent the new window size.
-        camera.setToOrtho(false,width/2, height/2);
+        camera.setToOrtho(false,width/5/PPM, height/5/PPM);
     }
 
     @Override
